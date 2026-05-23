@@ -1,4 +1,6 @@
+import { Link } from 'react-router-dom'
 import { PageHeader } from '../../../shared/components/ui/PageHeader'
+import { Button } from '../../../shared/components/ui/Button'
 import { Spinner } from '../../../shared/components/ui/Spinner'
 import { EmptyState } from '../../../shared/components/ui/EmptyState'
 import { OrderTable } from '../components/OrderTable'
@@ -32,11 +34,24 @@ export function OrdersPage() {
       <PageHeader
         kicker="Sales"
         title="Orders"
-        description="Review customer orders and update fulfillment status."
+        description="Review customer orders, create manual orders, and update fulfillment status."
+        actions={
+          <Link to="/orders/new">
+            <Button type="button">Create order</Button>
+          </Link>
+        }
       />
 
       {orders.length === 0 ? (
-        <EmptyState title="No orders yet" description="New orders will appear here." />
+        <EmptyState
+          title="No orders yet"
+          description="Create a manual order or wait for storefront checkout."
+          action={
+            <Link to="/orders/new">
+              <Button type="button">Create order</Button>
+            </Link>
+          }
+        />
       ) : (
         <OrderTable orders={orders} />
       )}

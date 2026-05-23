@@ -1,5 +1,13 @@
 import { httpClient } from '../../../shared/api/httpClient'
 
+/**
+ * @param {import('../../../shared/models/order').CreateOrderPayload} payload
+ */
+export async function createOrder(payload) {
+  const { data } = await httpClient.post('/api/orders', payload)
+  return data
+}
+
 export async function fetchOrders() {
   const { data } = await httpClient.get('/api/orders')
   return data

@@ -3,6 +3,7 @@ import { formatCurrency, formatDate } from '../../../shared/lib/format'
 import { formatPaymentMethod } from '../../../shared/lib/formatPaymentMethod'
 import { Badge } from '../../../shared/components/ui/Badge'
 import { ORDER_STATUS_LABELS } from '../../../shared/models/order'
+import { formatOrderLabel } from '../lib/normalizeOrder'
 
 export function OrderTable({ orders }) {
   return (
@@ -10,7 +11,7 @@ export function OrderTable({ orders }) {
       <table className="data-table">
         <thead>
           <tr>
-            <th>Order</th>
+            <th>Reference</th>
             <th>Customer</th>
             <th>Payment</th>
             <th>Total</th>
@@ -22,7 +23,7 @@ export function OrderTable({ orders }) {
         <tbody>
           {orders.map((order) => (
             <tr key={order.id}>
-              <td className="font-mono text-xs text-white/60">#{order.id.slice(-6).toUpperCase()}</td>
+              <td className="font-mono text-xs text-rebel-red">{formatOrderLabel(order)}</td>
               <td>
                 <div>
                   <p className="font-medium text-white">{order.customerName}</p>

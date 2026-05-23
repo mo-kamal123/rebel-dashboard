@@ -11,6 +11,7 @@ import { formatCurrency, formatDate } from '../../../shared/lib/format'
 import { formatPaymentMethod } from '../../../shared/lib/formatPaymentMethod'
 import { getApiErrorMessage } from '../../../shared/lib/getApiErrorMessage'
 import { ORDER_STATUS_LABELS } from '../../../shared/models/order'
+import { formatOrderLabel } from '../lib/normalizeOrder'
 
 export function OrderDetailPage() {
   const { id } = useParams()
@@ -53,7 +54,7 @@ export function OrderDetailPage() {
     <div className="space-y-6">
       <PageHeader
         kicker="Order"
-        title={`#${order.id.slice(-6).toUpperCase()}`}
+        title={formatOrderLabel(order)}
         description={`Placed ${formatDate(order.createdAt)}`}
         actions={
           <Link to="/orders">
@@ -70,7 +71,7 @@ export function OrderDetailPage() {
           <ul className="space-y-3">
             {order.products.map((item) => (
               <li
-                key={`${item.product._id}-${item.quantity}`}
+                key={`${item.product._id}-${item.size}-${item.quantity}`}
                 className="flex items-center justify-between gap-4 rounded-xl border border-white/10 bg-white/[0.02] p-4"
               >
                 <div className="flex items-center gap-3">
@@ -83,7 +84,9 @@ export function OrderDetailPage() {
                   ) : null}
                   <div>
                     <p className="font-medium text-white">{item.product.name}</p>
-                    <p className="text-xs text-white/40">Qty {item.quantity}</p>
+                    <p className="text-xs text-white/40">
+                      Size EU {item.size} · Qty {item.quantity}
+                    </p>
                   </div>
                 </div>
                 <p className="text-sm text-white/70">
@@ -110,6 +113,11 @@ export function OrderDetailPage() {
             {statusMutation.isError ? (
               <p className="text-xs text-red-400">{getApiErrorMessage(statusMutation.error)}</p>
             ) : null}
+          </section>
+
+          <section className="glass-panel space-y-3 p-6 text-sm">
+            <h2 className="font-semibold uppercase tracking-wider text-white/50">Reference</h2>
+            <p className="font-mono text-rebel-red">{order.referenceNumber || '—'}</p>
           </section>
 
           <section className="glass-panel space-y-3 p-6 text-sm">

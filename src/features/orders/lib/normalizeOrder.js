@@ -4,6 +4,7 @@
 export function normalizeOrder(order) {
   return {
     id: order._id,
+    referenceNumber: order.referenceNumber ?? '',
     user: order.user,
     customerName: order.name,
     phoneNumber: order.phoneNumber,
@@ -15,4 +16,8 @@ export function normalizeOrder(order) {
     createdAt: order.createdAt,
     updatedAt: order.updatedAt,
   }
+}
+
+export function formatOrderLabel(order) {
+  return order.referenceNumber || `#${order.id.slice(-6).toUpperCase()}`
 }
