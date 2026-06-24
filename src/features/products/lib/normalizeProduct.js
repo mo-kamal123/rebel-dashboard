@@ -11,6 +11,8 @@ export function normalizeProduct(product) {
     category: product.category,
     stock: product.stock,
     sizes: product.sizes ?? [],
+    discount: product.discount,
+    discountedPrice: product.discountedPrice,
     createdAt: product.createdAt,
     updatedAt: product.updatedAt,
   }

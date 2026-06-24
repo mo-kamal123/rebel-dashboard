@@ -46,6 +46,15 @@ export function ProductForm({ mode = 'create', product, onSubmit, isPending, err
           onChange={form.handleChange}
         />
         <Input
+          label="Discount (EGP)"
+          name="discount"
+          type="number"
+          min="0"
+          step="1"
+          value={form.values.discount}
+          onChange={form.handleChange}
+        />
+        <Input
           label="Stock"
           name="stock"
           type="number"

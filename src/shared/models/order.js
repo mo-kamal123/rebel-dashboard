@@ -8,7 +8,7 @@
 
 /**
  * @typedef {Object} OrderItem
- * @property {{ _id: string, name: string, price: number, images?: string[], sizes?: number[] }} product
+ * @property {{ _id: string, name: string, price: number, discount?: number, discountedPrice?: number, images?: string[], sizes?: number[] }} product
  * @property {number} size
  * @property {number} quantity
  */

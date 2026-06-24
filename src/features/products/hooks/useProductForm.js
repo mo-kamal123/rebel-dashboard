@@ -8,6 +8,7 @@ const emptyForm = {
   category: '',
   stock: '',
   sizes: '',
+  discount: '',
 }
 
 export function useProductForm(initialProduct) {
@@ -21,6 +22,7 @@ export function useProductForm(initialProduct) {
       category: initialProduct.category ?? '',
       stock: String(initialProduct.stock ?? ''),
       sizes: sizesToInput(initialProduct.sizes),
+      discount: String(initialProduct.discount ?? ''),
     }
   })
 

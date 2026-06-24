@@ -34,9 +34,10 @@ export function OrderLineItems({
         {lineItems.map((item, index) => {
           const product = productById.get(item.productId)
           const sizes = getSizeOptions(product)
+          const unitPrice = product ? (product.discountedPrice ?? product.price) : null
           const lineTotal =
-            product && Number(item.quantity) >= 1
-              ? product.price * Number(item.quantity)
+            product && unitPrice != null && Number(item.quantity) >= 1
+              ? unitPrice * Number(item.quantity)
               : null
 
           return (
@@ -62,7 +63,7 @@ export function OrderLineItems({
                 <option value="">Select product</option>
                 {products.map((entry) => (
                   <option key={entry.id} value={entry.id}>
-                    {entry.name} — {formatCurrency(entry.price)} (stock {entry.stock})
+                    {entry.name} — {entry.discount ? `${formatCurrency(entry.discountedPrice)} (was ${formatCurrency(entry.price)})` : formatCurrency(entry.price)} (stock {entry.stock})
                   </option>
                 ))}
               </Select>

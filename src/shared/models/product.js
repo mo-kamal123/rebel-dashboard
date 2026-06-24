@@ -8,6 +8,8 @@
  * @property {string} category
  * @property {number} stock
  * @property {number[]} sizes
+ * @property {number} discount
+ * @property {number} discountedPrice
  * @property {string} createdAt
  * @property {string} updatedAt
  */

@@ -8,7 +8,7 @@ const links = [
   { to: '/orders', label: 'Orders' },
 ]
 
-export function Sidebar() {
+export function Sidebar({ isOpen, onClose }) {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const user = useSelector((state) => state.auth.user)
@@ -19,11 +19,26 @@ export function Sidebar() {
   }
 
   return (
-    <aside className="flex h-full w-64 flex-col border-r border-white/10 bg-black/40 px-4 py-6">
-      <div className="mb-8 px-2">
-        <p className="text-xs uppercase tracking-[0.4em] text-rebel-red">Rebel</p>
-        <h1 className="font-display text-2xl uppercase text-white">Admin</h1>
-        {user?.name ? <p className="mt-1 truncate text-xs text-white/40">{user.name}</p> : null}
+    <aside
+      className={`fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-white/10 bg-black/40 px-4 py-6 transition-transform duration-300 ${
+        isOpen ? 'translate-x-0' : '-translate-x-full'
+      }`}
+    >
+      <div className="mb-8 flex items-start justify-between px-2">
+        <div>
+          <p className="text-xs uppercase tracking-[0.4em] text-rebel-red">Rebel</p>
+          <h1 className="font-display text-2xl uppercase text-white">Admin</h1>
+          {user?.name ? <p className="mt-1 truncate text-xs text-white/40">{user.name}</p> : null}
+        </div>
+        <button
+          type="button"
+          onClick={onClose}
+          className="rounded-lg p-1 text-white/50 hover:text-white lg:hidden"
+        >
+          <svg className="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
       </div>
 
       <nav className="flex flex-1 flex-col gap-1">
@@ -32,6 +47,7 @@ export function Sidebar() {
             key={link.to}
             to={link.to}
             end={link.end}
+            onClick={onClose}
             className={({ isActive }) =>
               `rounded-xl px-3 py-2.5 text-sm transition ${
                 isActive

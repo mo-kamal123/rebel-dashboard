@@ -87,18 +87,49 @@ export function OrderDetailPage() {
                     <p className="text-xs text-white/40">
                       Size EU {item.size} · Qty {item.quantity}
                     </p>
+                    {item.product.discount ? (
+                      <p className="text-xs text-rebel-red">
+                        {item.product.discount} EGP off · {formatCurrency(item.product.discountedPrice)} each
+                      </p>
+                    ) : null}
                   </div>
                 </div>
                 <p className="text-sm text-white/70">
-                  {formatCurrency(item.product.price * item.quantity)}
+                  {item.product.discount ? (
+                    <span className="flex flex-col items-end">
+                      <span className="text-white/40 line-through">{formatCurrency(item.product.price * item.quantity)}</span>
+                      <span>{formatCurrency(item.product.discountedPrice * item.quantity)}</span>
+                    </span>
+                  ) : (
+                    formatCurrency(item.product.price * item.quantity)
+                  )}
                 </p>
               </li>
             ))}
           </ul>
-          <div className="flex justify-between border-t border-white/10 pt-4 text-sm">
-            <span className="text-white/50">Total</span>
-            <span className="font-semibold text-white">{formatCurrency(order.totalPrice)}</span>
-          </div>
+          {(() => {
+            const discountedTotal = order.products.reduce(
+              (sum, item) => sum + (item.product.discountedPrice ?? item.product.price) * item.quantity,
+              0,
+            )
+            const hasDiscount = discountedTotal !== order.totalPrice
+
+            return (
+              <div className="flex justify-between border-t border-white/10 pt-4 text-sm">
+                <span className="text-white/50">Total</span>
+                <span className="font-semibold text-white">
+                  {hasDiscount ? (
+                    <span className="flex flex-col items-end">
+                      <span className="text-white/40 line-through">{formatCurrency(order.totalPrice)}</span>
+                      <span>{formatCurrency(discountedTotal)}</span>
+                    </span>
+                  ) : (
+                    formatCurrency(order.totalPrice)
+                  )}
+                </span>
+              </div>
+            )
+          })()}
         </section>
 
         <aside className="space-y-4">

@@ -1,16 +1,17 @@
 /**
  * @param {{ productId: string, size: string, quantity: string }[]} lineItems
- * @param {{ id: string, price: number }[]} products
+ * @param {{ id: string, price: number, discountedPrice?: number }[]} products
  */
 export function calculateOrderTotal(lineItems, products) {
-  const priceById = new Map(products.map((product) => [product.id, product.price]))
+  const productMap = new Map(products.map((product) => [product.id, product]))
 
   return lineItems.reduce((sum, item) => {
-    const price = priceById.get(item.productId)
+    const product = productMap.get(item.productId)
     const quantity = Number(item.quantity)
 
-    if (!price || !Number.isFinite(quantity) || quantity < 1) return sum
+    if (!product || !Number.isFinite(quantity) || quantity < 1) return sum
 
-    return sum + price * quantity
+    const unitPrice = product.discountedPrice ?? product.price
+    return sum + unitPrice * quantity
   }, 0)
 }

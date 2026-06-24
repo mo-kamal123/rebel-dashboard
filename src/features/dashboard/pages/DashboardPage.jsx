@@ -10,7 +10,7 @@ function StatCard({ label, value, hint, to }) {
   const content = (
     <article className="glass-panel p-6 transition hover:border-white/20">
       <p className="text-xs uppercase tracking-wider text-white/45">{label}</p>
-      <p className="mt-2 font-display text-4xl text-white">{value}</p>
+      <p className="mt-2 font-display text-3xl text-white sm:text-4xl">{value}</p>
       {hint ? <p className="mt-2 text-sm text-white/40">{hint}</p> : null}
     </article>
   )
