@@ -1,14 +1,19 @@
-import { Select } from '../../../shared/components/ui/Select'
+import { Dropdown } from '../../../shared/components/ui/Dropdown'
 import { ORDER_STATUSES, ORDER_STATUS_LABELS } from '../../../shared/models/order'
+
+const options = ORDER_STATUSES.map((status) => ({
+  value: status,
+  label: ORDER_STATUS_LABELS[status],
+}))
 
 export function OrderStatusSelect({ value, onChange, disabled }) {
   return (
-    <Select label="Order status" value={value} onChange={onChange} disabled={disabled}>
-      {ORDER_STATUSES.map((status) => (
-        <option key={status} value={status}>
-          {ORDER_STATUS_LABELS[status]}
-        </option>
-      ))}
-    </Select>
+    <Dropdown
+      value={value}
+      options={options}
+      onChange={onChange}
+      disabled={disabled}
+      placeholder="Set status…"
+    />
   )
 }

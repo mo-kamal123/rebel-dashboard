@@ -3,4 +3,6 @@ export const queryKeys = {
   product: (id) => ['product', id],
   orders: ['orders'],
   order: (id) => ['order', id],
+  users: ['users'],
+  user: (id) => ['user', id],
 }

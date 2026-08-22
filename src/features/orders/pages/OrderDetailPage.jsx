@@ -44,8 +44,7 @@ export function OrderDetailPage() {
 
   const order = orderQuery.data
 
-  const handleStatusChange = (event) => {
-    const nextStatus = event.target.value
+  const handleStatusChange = (nextStatus) => {
     if (nextStatus === order.status) return
     statusMutation.mutate(nextStatus)
   }
