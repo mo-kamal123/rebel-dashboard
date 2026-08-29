@@ -1,5 +1,5 @@
 /**
- * @typedef {'pending' | 'paid' | 'shipped' | 'delivered' | 'cancelled'} OrderStatus
+ * @typedef {'pending' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled'} OrderStatus
  */
 
 /**
@@ -23,6 +23,8 @@
  * @property {string} address
  * @property {PaymentMethod} paymentMethod
  * @property {OrderItem[]} products
+ * @property {number} subtotal
+ * @property {number} shipping
  * @property {number} totalPrice
  * @property {OrderStatus} status
  * @property {string} createdAt
@@ -37,13 +39,14 @@
  * @property {PaymentMethod} paymentMethod
  * @property {{ product: string, size: number, quantity: number }[]} products
  * @property {string} [referenceNumber]
+ * @property {number} [shipping]
  */
 
-export const ORDER_STATUSES = ['pending', 'paid', 'shipped', 'delivered', 'cancelled']
+export const ORDER_STATUSES = ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled']
 
 export const ORDER_STATUS_LABELS = {
   pending: 'Pending',
-  paid: 'Paid',
+  confirmed: 'Confirmed',
   shipped: 'Shipped',
   delivered: 'Delivered',
   cancelled: 'Cancelled',

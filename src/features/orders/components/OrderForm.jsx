@@ -16,6 +16,8 @@ export function OrderForm({ products, onSubmit, isPending, error }) {
   const {
     form,
     lineItems,
+    estimatedSubtotal,
+    shippingAmount,
     estimatedTotal,
     handleFormChange,
     handleReferenceBlur,
@@ -74,19 +76,32 @@ export function OrderForm({ products, onSubmit, isPending, error }) {
           onChange={handleFormChange}
         />
 
-        <Select
-          label="Payment method"
-          name="paymentMethod"
-          value={form.paymentMethod}
-          onChange={handleFormChange}
-          required
-        >
-          {PAYMENT_METHODS.map((method) => (
-            <option key={method} value={method}>
-              {formatPaymentMethod(method)}
-            </option>
-          ))}
-        </Select>
+        <div className="grid gap-5 sm:grid-cols-2">
+          <Select
+            label="Payment method"
+            name="paymentMethod"
+            value={form.paymentMethod}
+            onChange={handleFormChange}
+            required
+          >
+            {PAYMENT_METHODS.map((method) => (
+              <option key={method} value={method}>
+                {formatPaymentMethod(method)}
+              </option>
+            ))}
+          </Select>
+
+          <Input
+            label="Shipping fee (optional)"
+            name="shipping"
+            type="number"
+            min="0"
+            step="0.01"
+            value={form.shipping}
+            onChange={handleFormChange}
+            placeholder="0"
+          />
+        </div>
       </section>
 
       <section className="glass-panel p-6 sm:p-8">
@@ -98,9 +113,21 @@ export function OrderForm({ products, onSubmit, isPending, error }) {
           onRemove={removeLineItem}
         />
 
-        <div className="mt-6 flex justify-between border-t border-white/10 pt-4 text-sm">
-          <span className="text-white/50">Estimated total</span>
-          <span className="font-semibold text-white">{formatCurrency(estimatedTotal)}</span>
+        <div className="mt-6 space-y-2 border-t border-white/10 pt-4 text-sm">
+          <div className="flex justify-between">
+            <span className="text-white/50">Subtotal</span>
+            <span className="text-white/70">{formatCurrency(estimatedSubtotal)}</span>
+          </div>
+          {shippingAmount > 0 ? (
+            <div className="flex justify-between">
+              <span className="text-white/50">Shipping</span>
+              <span className="text-white/70">{formatCurrency(shippingAmount)}</span>
+            </div>
+          ) : null}
+          <div className="flex justify-between font-semibold text-white">
+            <span>Total</span>
+            <span>{formatCurrency(estimatedTotal)}</span>
+          </div>
         </div>
       </section>
 

@@ -14,16 +14,25 @@ const initialForm = {
   phoneNumber: '',
   address: '',
   paymentMethod: 'cash',
+  shipping: '0',
+}
+
+function normalizeShipping(value) {
+  const parsed = Number(value)
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 0
 }
 
 export function useOrderForm(products = []) {
   const [form, setForm] = useState(initialForm)
   const [lineItems, setLineItems] = useState([emptyLineItem()])
 
-  const estimatedTotal = useMemo(
+  const estimatedSubtotal = useMemo(
     () => calculateOrderTotal(lineItems, products),
     [lineItems, products],
   )
+
+  const shippingAmount = normalizeShipping(form.shipping)
+  const estimatedTotal = estimatedSubtotal + shippingAmount
 
   const handleFormChange = (event) => {
     const { name, value } = event.target
@@ -62,6 +71,8 @@ export function useOrderForm(products = []) {
   return {
     form,
     lineItems,
+    estimatedSubtotal,
+    shippingAmount,
     estimatedTotal,
     handleFormChange,
     handleReferenceBlur,

@@ -22,3 +22,13 @@ export async function updateOrderStatus({ id, status }) {
   const { data } = await httpClient.patch(`/api/orders/${id}/status`, { status })
   return data
 }
+
+export async function updateOrder({ id, shipping }) {
+  const { data } = await httpClient.put(`/api/orders/${id}`, { shipping })
+  return data
+}
+
+export async function fetchOrderStatuses() {
+  const { data } = await httpClient.get('/api/orders/statuses')
+  return data.statuses
+}

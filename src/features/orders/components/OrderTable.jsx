@@ -5,11 +5,17 @@ import { Badge } from '../../../shared/components/ui/Badge'
 import { ORDER_STATUS_LABELS } from '../../../shared/models/order'
 import { formatOrderLabel } from '../lib/normalizeOrder'
 
-function getDiscountedTotal(products) {
-  return products.reduce((sum, item) => {
+function getProductsSummary(products) {
+  let originalTotal = 0
+  let hasDiscount = false
+
+  for (const item of products) {
     const unitPrice = item.product.discountedPrice ?? item.product.price
-    return sum + unitPrice * item.quantity
-  }, 0)
+    originalTotal += item.product.price * item.quantity
+    if (unitPrice !== item.product.price) hasDiscount = true
+  }
+
+  return { originalTotal, hasDiscount }
 }
 
 export function OrderTable({ orders }) {
@@ -31,8 +37,7 @@ export function OrderTable({ orders }) {
         </thead>
         <tbody>
           {orders.map((order) => {
-            const discountedTotal = getDiscountedTotal(order.products)
-            const hasDiscount = discountedTotal !== order.totalPrice
+            const { originalTotal, hasDiscount } = getProductsSummary(order.products)
 
             return (
               <tr
@@ -49,14 +54,17 @@ export function OrderTable({ orders }) {
                 </td>
                 <td>{formatPaymentMethod(order.paymentMethod)}</td>
                 <td>
-                  {hasDiscount ? (
-                    <span className="flex flex-col">
-                      <span className="text-white/50 line-through">{formatCurrency(order.totalPrice)}</span>
-                      <span>{formatCurrency(discountedTotal)}</span>
-                    </span>
-                  ) : (
-                    formatCurrency(order.totalPrice)
-                  )}
+                  <div className="flex flex-col items-start">
+                    {hasDiscount ? (
+                      <span className="text-white/40 line-through">{formatCurrency(originalTotal)}</span>
+                    ) : null}
+                    <span>{formatCurrency(order.subtotal)}</span>
+                    {order.shipping > 0 ? (
+                      <span className="text-xs text-white/40">
+                        + {formatCurrency(order.shipping)} shipping
+                      </span>
+                    ) : null}
+                  </div>
                 </td>
                 <td>
                   <Badge status={order.status}>{ORDER_STATUS_LABELS[order.status]}</Badge>

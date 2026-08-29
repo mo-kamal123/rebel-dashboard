@@ -5,4 +5,5 @@ export const queryKeys = {
   order: (id) => ['order', id],
   users: ['users'],
   user: (id) => ['user', id],
+  orderStatuses: ['order-statuses'],
 }

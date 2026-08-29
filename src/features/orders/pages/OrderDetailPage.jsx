@@ -1,22 +1,66 @@
+import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { PageHeader } from '../../../shared/components/ui/PageHeader'
 import { Spinner } from '../../../shared/components/ui/Spinner'
 import { EmptyState } from '../../../shared/components/ui/EmptyState'
 import { Badge } from '../../../shared/components/ui/Badge'
 import { Button } from '../../../shared/components/ui/Button'
+import { Input } from '../../../shared/components/ui/Input'
 import { OrderStatusSelect } from '../components/OrderStatusSelect'
 import { useOrderQuery } from '../hooks/useOrderQuery'
 import { useUpdateOrderStatusMutation } from '../hooks/useUpdateOrderStatusMutation'
+import { useUpdateOrderMutation } from '../hooks/useUpdateOrderMutation'
 import { formatCurrency, formatDate } from '../../../shared/lib/format'
 import { formatPaymentMethod } from '../../../shared/lib/formatPaymentMethod'
 import { getApiErrorMessage } from '../../../shared/lib/getApiErrorMessage'
 import { ORDER_STATUS_LABELS } from '../../../shared/models/order'
 import { formatOrderLabel } from '../lib/normalizeOrder'
 
+function ShippingEditor({ order }) {
+  const shippingMutation = useUpdateOrderMutation(order.id)
+  const [shippingDraft, setShippingDraft] = useState(String(order.shipping))
+
+  const handleSubmit = (event) => {
+    event.preventDefault()
+    const nextShipping = Number(shippingDraft)
+    if (!Number.isFinite(nextShipping) || nextShipping < 0) return
+    if (nextShipping === order.shipping) return
+    shippingMutation.mutate(nextShipping)
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-2">
+      <Input
+        label="Shipping (EGP)"
+        name="shipping"
+        type="number"
+        min="0"
+        step="0.01"
+        value={shippingMutation.isPending ? shippingMutation.variables : shippingDraft}
+        onChange={(event) => setShippingDraft(event.target.value)}
+        disabled={shippingMutation.isPending}
+      />
+      <Button
+        type="submit"
+        variant="ghost"
+        size="sm"
+        disabled={shippingMutation.isPending || Number(shippingDraft) === order.shipping}
+      >
+        {shippingMutation.isPending ? 'Saving…' : 'Update shipping'}
+      </Button>
+      {shippingMutation.isError ? (
+        <p className="text-xs text-red-400">{getApiErrorMessage(shippingMutation.error)}</p>
+      ) : null}
+    </form>
+  )
+}
+
 export function OrderDetailPage() {
   const { id } = useParams()
   const orderQuery = useOrderQuery(id)
   const statusMutation = useUpdateOrderStatusMutation(id)
+
+  const order = orderQuery.data
 
   if (orderQuery.isLoading) {
     return (
@@ -41,8 +85,6 @@ export function OrderDetailPage() {
       />
     )
   }
-
-  const order = orderQuery.data
 
   const handleStatusChange = (nextStatus) => {
     if (nextStatus === order.status) return
@@ -107,25 +149,20 @@ export function OrderDetailPage() {
             ))}
           </ul>
           {(() => {
-            const discountedTotal = order.products.reduce(
-              (sum, item) => sum + (item.product.discountedPrice ?? item.product.price) * item.quantity,
-              0,
-            )
-            const hasDiscount = discountedTotal !== order.totalPrice
-
             return (
-              <div className="flex justify-between border-t border-white/10 pt-4 text-sm">
-                <span className="text-white/50">Total</span>
-                <span className="font-semibold text-white">
-                  {hasDiscount ? (
-                    <span className="flex flex-col items-end">
-                      <span className="text-white/40 line-through">{formatCurrency(order.totalPrice)}</span>
-                      <span>{formatCurrency(discountedTotal)}</span>
-                    </span>
-                  ) : (
-                    formatCurrency(order.totalPrice)
-                  )}
-                </span>
+              <div className="flex flex-col gap-1 border-t border-white/10 pt-4 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-white/50">Subtotal</span>
+                  <span className="text-white/70">{formatCurrency(order.subtotal)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-white/50">Shipping</span>
+                  <span className="text-white/70">{formatCurrency(order.shipping)}</span>
+                </div>
+                <div className="flex justify-between font-semibold text-white">
+                  <span>Total</span>
+                  <span>{formatCurrency(order.totalPrice)}</span>
+                </div>
               </div>
             )
           })()}
@@ -160,9 +197,10 @@ export function OrderDetailPage() {
             ) : null}
           </section>
 
-          <section className="glass-panel space-y-2 p-6 text-sm">
+          <section className="glass-panel space-y-3 p-6 text-sm">
             <h2 className="font-semibold uppercase tracking-wider text-white/50">Payment</h2>
             <p className="text-white">{formatPaymentMethod(order.paymentMethod)}</p>
+            <ShippingEditor key={order.id} order={order} />
           </section>
         </aside>
       </div>
